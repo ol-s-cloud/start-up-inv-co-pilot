@@ -1,0 +1,8 @@
+# Model Configuration
+models:
+  xgboost:
+    max_depth: 6
+    learning_rate: 0.1
+  neural_network:
+    layers: [64, 32, 16]
+    activation: 'relu'
