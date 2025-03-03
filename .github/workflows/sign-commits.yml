@@ -28,7 +28,7 @@ jobs:
           git config --global user.name "${{ github.repository_owner }}"
           git config --global user.email "${{ steps.import_gpg.outputs.email }}"
           
-          # Find recent unsigned commits (adjust author if needed)
+          # Find recent unsigned commits
           COMMITS_TO_SIGN=$(git log --format="%H" --no-show-signature origin/main..HEAD)
           
           if [ -n "$COMMITS_TO_SIGN" ]; then
