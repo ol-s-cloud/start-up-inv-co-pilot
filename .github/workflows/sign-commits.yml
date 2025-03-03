@@ -1,0 +1,46 @@
+name: Sign Unsigned Commits
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  sign-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+          
+      - name: Find and Sign Unsigned Commits
+        run: |
+          # Configure Git
+          git config --global user.name "${{ github.repository_owner }}"
+          git config --global user.email "${{ steps.import_gpg.outputs.email }}"
+          
+          # Find recent unsigned commits (adjust author if needed)
+          COMMITS_TO_SIGN=$(git log --format="%H" --no-show-signature origin/main..HEAD)
+          
+          if [ -n "$COMMITS_TO_SIGN" ]; then
+            # Create a new branch for signed commits
+            git checkout -b signed-commits
+            
+            # Amend and sign each commit
+            for COMMIT in $COMMITS_TO_SIGN; do
+              git checkout $COMMIT
+              git commit --amend --no-edit -S
+            done
+            
+            # Push the signed commits
+            git push --force origin signed-commits:main
+          fi
