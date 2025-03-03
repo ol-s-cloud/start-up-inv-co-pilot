@@ -19,4 +19,4 @@ This project implements an ensemble machine learning approach for predicting sta
 3. Run initial setup: `python setup.py`
 
 ## Documentation
-See `docs/` directory for detailed documentation.
+See `docs/` directory for detailed documentation.ReadMe updates
